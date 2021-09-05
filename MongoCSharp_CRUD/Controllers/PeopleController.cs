@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MongoCSharp_CRUD.Models;
+using MongoDB.Bson;
 
 namespace MongoCSharp_CRUD.Controllers
 {
@@ -65,7 +66,7 @@ namespace MongoCSharp_CRUD.Controllers
         }
 
         // GET: People/Edit/5
-        public  IActionResult Edit(string? id)
+        public  IActionResult Edit(string id)
         {
             if (id == null)
             {
@@ -85,17 +86,18 @@ namespace MongoCSharp_CRUD.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("id,Name,Family,WebSite")] Person person)
+        public IActionResult Edit(string id, [Bind("id,Name,Family,WebSite")] Person person)
         {
-            if (id != person._id.ToString())
-            {
-                return NotFound();
-            }
+            //if (id != person._id.ToString())
+            //{
+            //    return NotFound();
+            //}
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    person._id = ObjectId.Parse(id);
                     _context.Update(person);
                    
                 }

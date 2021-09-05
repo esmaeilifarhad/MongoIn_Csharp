@@ -18,7 +18,7 @@ namespace MongoCSharp_CRUD.Models
         {
             client = new MongoClient("mongodb://localhost");
             server = client.GetServer();
-            db = server.GetDatabase("FirstDatabase");
+            db = server.GetDatabase("firstDatabase");
             people = db.GetCollection<Person>("people");
         }
         public IEnumerable<Person> GetAllPerson() {
