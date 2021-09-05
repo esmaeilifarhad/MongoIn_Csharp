@@ -11,11 +11,11 @@ namespace MongoCSharp_CRUD.Controllers
 {
     public class PeopleController : Controller
     {
-        private readonly DataManager _context;
+        private readonly DataManager _context=new DataManager();
 
-        public PeopleController(DataManager context)
+        public PeopleController()
         {
-            _context = context;
+           // _context = context;
         }
 
         // GET: People
@@ -87,7 +87,7 @@ namespace MongoCSharp_CRUD.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("id,Name,Family,WebSite")] Person person)
         {
-            if (id != person._id)
+            if (id != person._id.ToString())
             {
                 return NotFound();
             }
@@ -97,18 +97,11 @@ namespace MongoCSharp_CRUD.Controllers
                 try
                 {
                     _context.Update(person);
-                    await _context.SaveChangesAsync();
+                   
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PersonExists(person.id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                   
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -116,15 +109,15 @@ namespace MongoCSharp_CRUD.Controllers
         }
 
         // GET: People/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var person = await _context.Person
-                .FirstOrDefaultAsync(m => m.id == id);
+            var person = _context.GetPersonById(id);
+              
             if (person == null)
             {
                 return NotFound();
@@ -136,17 +129,19 @@ namespace MongoCSharp_CRUD.Controllers
         // POST: People/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var person = await _context.Person.FindAsync(id);
-            _context.Person.Remove(person);
-            await _context.SaveChangesAsync();
+              _context.DeletePerson(id);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PersonExists(int id)
+        private bool PersonExists(string id)
         {
-            return _context.Person.Any(e => e.id == id);
+            if (_context.GetPersonById(id)!=null)
+                return true;
+            return false;
+                     
         }
     }
 }

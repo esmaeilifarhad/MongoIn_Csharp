@@ -13,7 +13,7 @@ namespace MongoCSharp_CRUD.Models
        private MongoClient client;
         private MongoServer server;
         private MongoDatabase db;
-        MongoCollection<Person> people;
+       private MongoCollection<Person> people;
         public DataManager()
         {
             client = new MongoClient("mongodb://localhost");
